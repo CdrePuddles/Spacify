@@ -20,7 +20,7 @@ CREATE TABLE PlanetarySystem (
     Radius REAL,
     Host CHAR (30) NOT NULL,
     PRIMARY KEY (HostName),
-    FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName)
+    FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE
 );
 
 CREATE TABLE Quasar (
@@ -39,7 +39,7 @@ CREATE TABLE Star (
     DiscoveryYear INT,
     Host CHAR(30) NOT NULL,
     PRIMARY KEY (SolarName),
-    FOREIGN KEY (Host) REFERENCES PlanetarySystem(Host)
+    FOREIGN KEY (Host) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
 );
 
 CREATE TABLE Exoplanet (
@@ -51,7 +51,7 @@ CREATE TABLE Exoplanet (
     DiscoveryYear INT,
     Host CHAR(30) NOT NULL,
     PRIMARY KEY (PlanetaryName),
-    FOREIGN KEY (Host) REFERENCES Star(SolarName)
+    FOREIGN KEY (Host) REFERENCES Star(SolarName) ON DELETE CASCADE
 );
 
 CREATE TABLE Orbits_Star (
@@ -90,6 +90,7 @@ CREATE TABLE Biome (
     PRIMARY KEY (BiomeType)
 );
 
+
 CREATE TABLE Ecosystem (
     PlanetaryName CHAR(30),
     BiomeType CHAR(30),
@@ -97,7 +98,7 @@ CREATE TABLE Ecosystem (
     PRIMARY KEY (PlanetaryName, BiomeType),
     FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName),
     FOREIGN KEY (BiomeType) REFERENCES Biome(BiomeType)
-    FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum)
+    --FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum)
 );
 
 CREATE TABLE Kingdom (
@@ -107,18 +108,19 @@ CREATE TABLE Kingdom (
     PlanetaryName CHAR(30),
     BiomeType CHAR(30),
     PRIMARY KEY (Phylum),
-    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType)
+    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType),
+    UNIQUE (Phylum, PlanetaryName, BiomeType)
 );
 
+/*
 CREATE TABLE Has_Kingdom(
     Phylum CHAR(30),
     PlanetaryName CHAR(30),
     BiomeType CHAR(30),
     PRIMARY KEY (Phylum, PlanetaryName, BiomeType),
     FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum),
-    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType),
-    UNIQUE (Phylum, PlanetaryName, BiomeType)
-);
+    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType),  
+);*/
 
 LOAD DATA INFILE 'Data/Universe.csv'
 INTO TABLE Galaxy
