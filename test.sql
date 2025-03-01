@@ -1,127 +1,133 @@
 CREATE TABLE Universe (
-    UniversalName CHAR(30),
+    UniversalName VARCHAR(50),
     Age REAL,
     ExpansionaryRate REAL,
     PRIMARY KEY (UniversalName)
 );
 
 CREATE TABLE Galaxy (
-    GalacticName CHAR(30),
-    Constellation CHAR(30),
-    SpectralType CHAR(20),
+    GalacticName VARCHAR(50),
+    Constellation VARCHAR(50),
+    VariationType VARCHAR(50),
     Radius REAL,
-    PRIMARY KEY (GalacticName)
+    Universe VARCHAR(50) NOT NULL,
+    PRIMARY KEY (GalacticName),
+    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
 );
 
 CREATE TABLE PlanetarySystem (
-    HostName CHAR(30),
+    HostName VARCHAR(50),
     NumberOfStars INT,
     NumberOfPlanets INT,
     Radius REAL,
-    Host CHAR (30) NOT NULL,
+    Host VARCHAR(50) NOT NULL,
     PRIMARY KEY (HostName),
     FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE
 );
 
 CREATE TABLE Quasar (
-    QuasarName CHAR(30),
+    QuasarName VARCHAR(50),
     SpectralRedshift REAL,
     DistanceFromEarth REAL,
     Luminosity REAL,
-    PRIMARY KEY (QuasarName)
+    Universe VARCHAR(50) NOT NULL,
+    PRIMARY KEY (QuasarName),
+    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
 );
 
 CREATE TABLE Star (
-    SolarName CHAR(30),
-    SpectralType CHAR(8),
+    SolarName VARCHAR(50),
+    SpectralType CHAR(10),
     Radius REAL,
-    ElementalComposition CHAR(30),
+    ElementalComposition VARCHAR(50),
     DiscoveryYear INT,
-    Host CHAR(30) NOT NULL,
+    Host VARCHAR(50) NOT NULL,
     PRIMARY KEY (SolarName),
     FOREIGN KEY (Host) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
 );
 
 CREATE TABLE Exoplanet (
-    PlanetaryName CHAR(30),
+    PlanetaryName VARCHAR(50),
     Radius REAL,
     DurationOfDay REAL,
-    PlanetaryType CHAR(30),
+    PlanetaryType VARCHAR(50),
     Biosphere INT,
     DiscoveryYear INT,
-    Host CHAR(30) NOT NULL,
+    Host VARCHAR(50) NOT NULL,
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (Host) REFERENCES Star(SolarName) ON DELETE CASCADE
 );
 
 CREATE TABLE Orbits_Star (
-    PlanetaryName CHAR(30),
-    SolName CHAR(30),
+    PlanetaryName VARCHAR(50),
+    SolName VARCHAR(50),
     OrbitalPeriod REAL,
     PRIMARY KEY (PlanetaryName),
-    FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName),
-    FOREIGN KEY (SolName) REFERENCES Star(SolarName)
+    FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE,
+    FOREIGN KEY (SolName) REFERENCES Star(SolarName) ON DELETE CASCADE
 );
 
 CREATE TABLE Moon (
-    LunarName CHAR(30),
+    LunarName VARCHAR(50),
     Radius REAL,
     TidalLock INT,
-    CoreComposition CHAR(30),
+    CoreComposition VARCHAR(50),
     DiscoveryYear INT,
-    Host CHAR(30) NOT NULL,
+    Host VARCHAR(50) NOT NULL,
     PRIMARY KEY (LunarName),
-    FOREIGN KEY (Host) REFERENCES Exoplanet(PlanetaryName)
+    FOREIGN KEY (Host) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
 
 CREATE TABLE Orbits_Planet (
-    LunarName CHAR(30),
-    PlanetaryName CHAR(30) NOT NULL,
+    LunarName VARCHAR(50),
+    Planet VARCHAR(50) NOT NULL,
     OrbitalPeriod REAL,
     PRIMARY KEY (LunarName),
-    FOREIGN KEY (LunarName) REFERENCES Moon(LunarName),
-    FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName)
+    FOREIGN KEY (LunarName) REFERENCES Moon(LunarName) ON DELETE CASCADE,
+    FOREIGN KEY (Planet) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
 
 CREATE TABLE Biome (
-    BiomeType CHAR(30),
+    BiomeType VARCHAR(50),
     AverageTemperature REAL,
-    EcologicalComposition CHAR(20),
+    EcologicalComposition VARCHAR(50),
     PRIMARY KEY (BiomeType)
 );
 
-
 CREATE TABLE Ecosystem (
-    PlanetaryName CHAR(30),
-    BiomeType CHAR(30),
-    Phylum CHAR(30),
-    PRIMARY KEY (PlanetaryName, BiomeType),
-    FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName),
-    FOREIGN KEY (BiomeType) REFERENCES Biome(BiomeType)
+    Planet VARCHAR(50),
+    Biome VARCHAR(50),
+    --Phylum VARCHAR(50) NOT NULL,
+    PRIMARY KEY (Planet, Biome),
+    FOREIGN KEY (Planet) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE,
+    FOREIGN KEY (Biome) REFERENCES Biome(BiomeType) ON DELETE CASCADE
     --FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum)
 );
 
 CREATE TABLE Kingdom (
-    Phylum CHAR(30),
-    TrophicLevel CHAR(40),
-    ColloquialGenus CHAR(50),
-    PlanetaryName CHAR(30),
-    BiomeType CHAR(30),
-    PRIMARY KEY (Phylum),
-    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType),
-    UNIQUE (Phylum, PlanetaryName, BiomeType)
+    Phylum VARCHAR(50),
+    ColloquialGenus VARCHAR(50),
+    TrophicLevel VARCHAR(50),
+    --Planet VARCHAR(50) NOT NULL,
+    --Biome VARCHAR(50) NOT NULL,
+    PRIMARY KEY (Phylum)
+    --FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(PlanetaryName, BiomeType) ON DELETE CASCADE,
+    --UNIQUE (Phylum, Planet, BiomeType)
 );
 
-/*
-CREATE TABLE Has_Kingdom(
-    Phylum CHAR(30),
-    PlanetaryName CHAR(30),
-    BiomeType CHAR(30),
-    PRIMARY KEY (Phylum, PlanetaryName, BiomeType),
-    FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum),
-    FOREIGN KEY (PlanetaryName, BiomeType) REFERENCES Ecosystem(PlanetaryName, BiomeType),  
-);*/
 
+CREATE TABLE Has_Kingdom(
+    Phylum VARCHAR(50),
+    Planet VARCHAR(50),
+    Biome VARCHAR(50),
+    PRIMARY KEY (Phylum, Planet, Biome),
+    FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum),
+    FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome),  
+    --UNIQUE (Phylum, Planet, Biome)
+);
+
+
+/*
 LOAD DATA INFILE 'Data/Universe.csv'
 INTO TABLE Galaxy
 FIELDS TERMINATED BY ','
@@ -212,3 +218,4 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (Phylum, PlanetaryName, BiomeType);
+*/
