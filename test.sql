@@ -120,9 +120,10 @@ CREATE TABLE Has_Kingdom(
     Phylum VARCHAR(50),
     Planet VARCHAR(50),
     Biome VARCHAR(50),
+    Alleles INT,
     PRIMARY KEY (Phylum, Planet, Biome),
     FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum),
-    FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome),  
+    FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome)
     --UNIQUE (Phylum, Planet, Biome)
 );
 
