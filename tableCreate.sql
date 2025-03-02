@@ -21,8 +21,10 @@ CREATE TABLE PlanetarySystem (
     NumberOfPlanets INT,
     Radius REAL,
     Host VARCHAR(50) NOT NULL,
+    Universe VARCHAR(50) NOT NULL,
     PRIMARY KEY (HostName),
-    FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE
+    FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE,
+    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
 );
 
 CREATE TABLE Quasar (
@@ -39,8 +41,10 @@ CREATE TABLE CelestialBody (
     CelestialName VARCHAR(50),
     DiscoveryYear INT,
     ObjectType CHAR(1) NOT NULL,
+    GalacticHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (CelestialName),
     UNIQUE (CelestialName, ObjectType),
+    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE,
     CHECK (ObjectType IN ('S', 'P')) -- validates object type
 );
 
@@ -49,11 +53,8 @@ CREATE TABLE Star (
     SpectralType CHAR(10),
     Radius REAL,
     ElementalComposition VARCHAR(50),
-    GalacticHost VARCHAR(50) NOT NULL,
-    ObjectType CHAR(1) NOT NULL,
     PRIMARY KEY (SolarName),
-    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE,
-    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
+    FOREIGN KEY (SolarName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE,
     CHECK (ObjectType = 'S')
 );
 
@@ -66,10 +67,9 @@ CREATE TABLE Exoplanet (
     GravityStrength VARCHAR(50),
     Biosphere INT,
     SolarHost VARCHAR(50) NOT NULL,
-    ObjectType CHAR(1) NOT NULL,
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
-    FOREIGN KEY (PlanetaryName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
+    FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE,
     CHECK (ObjectType = 'P')
 );
 
@@ -91,7 +91,7 @@ CREATE TABLE Moon (
     OrbitalPeriod REAL,
     DiscoveryYear INT,
     Host VARCHAR(50) NOT NULL,
-    PRIMARY KEY (LunarName),
+    PRIMARY KEY (LunarName, Host),
     FOREIGN KEY (Host) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
 
