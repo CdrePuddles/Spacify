@@ -35,29 +35,45 @@ CREATE TABLE Quasar (
     FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
 );
 
+CREATE TABLE CelestialBody (
+    CelestialName VARCHAR(50),
+    DiscoveryYear INT,
+    ObjectType CHAR(1) NOT NULL,
+    PRIMARY KEY (CelestialName),
+    UNIQUE (CelestialName, ObjectType),
+    CHECK (ObjectType IN ('S', 'P')) -- validates object type
+);
+
 CREATE TABLE Star (
     SolarName VARCHAR(50),
     SpectralType CHAR(10),
     Radius REAL,
     ElementalComposition VARCHAR(50),
-    DiscoveryYear INT,
-    Host VARCHAR(50) NOT NULL,
+    GalacticHost VARCHAR(50) NOT NULL,
+    ObjectType CHAR(1) NOT NULL,
     PRIMARY KEY (SolarName),
-    FOREIGN KEY (Host) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
+    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE,
+    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
+    CHECK (ObjectType = 'S')
 );
 
 CREATE TABLE Exoplanet (
     PlanetaryName VARCHAR(50),
     Radius REAL,
     DurationOfDay REAL,
+    OrbitalPeriod REAL,
     PlanetaryType VARCHAR(50),
+    GravityStrength VARCHAR(50),
     Biosphere INT,
-    DiscoveryYear INT,
-    Host VARCHAR(50) NOT NULL,
+    SolarHost VARCHAR(50) NOT NULL,
+    ObjectType CHAR(1) NOT NULL,
     PRIMARY KEY (PlanetaryName),
-    FOREIGN KEY (Host) REFERENCES Star(SolarName) ON DELETE CASCADE
+    FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
+    FOREIGN KEY (PlanetaryName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
+    CHECK (ObjectType = 'P')
 );
 
+/*
 CREATE TABLE Orbits_Star (
     PlanetaryName VARCHAR(50),
     SolName VARCHAR(50),
@@ -65,19 +81,21 @@ CREATE TABLE Orbits_Star (
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE,
     FOREIGN KEY (SolName) REFERENCES Star(SolarName) ON DELETE CASCADE
-);
+);*/
 
 CREATE TABLE Moon (
     LunarName VARCHAR(50),
     Radius REAL,
     TidalLock INT,
     CoreComposition VARCHAR(50),
+    OrbitalPeriod REAL,
     DiscoveryYear INT,
     Host VARCHAR(50) NOT NULL,
     PRIMARY KEY (LunarName),
     FOREIGN KEY (Host) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
 
+/*
 CREATE TABLE Orbits_Planet (
     LunarName VARCHAR(50),
     Planet VARCHAR(50) NOT NULL,
@@ -86,6 +104,7 @@ CREATE TABLE Orbits_Planet (
     FOREIGN KEY (LunarName) REFERENCES Moon(LunarName) ON DELETE CASCADE,
     FOREIGN KEY (Planet) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
+*/
 
 CREATE TABLE Biome (
     BiomeType VARCHAR(50),
