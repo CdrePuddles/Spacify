@@ -97,7 +97,7 @@ CREATE TABLE Biome (
     PRIMARY KEY (BiomeType)
 );
 
-CREATE TABLE Ecosystem (
+CREATE TABLE HasBiome (
     Planet VARCHAR(50),
     Biome VARCHAR(50),
     PRIMARY KEY (Planet, Biome),
@@ -106,22 +106,22 @@ CREATE TABLE Ecosystem (
 );
 
 CREATE TABLE Kingdom (
-    Phylum VARCHAR(50),
+    Taxonomy VARCHAR(50),
     ColloquialGenus VARCHAR(50),
     TrophicLevel VARCHAR(50),
     SpeciesCount INT,
     ReproductionType VARCHAR(50),
     Lifespan INT,
-    PRIMARY KEY (Phylum)
+    PRIMARY KEY (Taxonomy)
 );
 
 CREATE TABLE Has_Kingdom(
-    Phylum VARCHAR(50),
+    Taxonomy VARCHAR(50),
     Planet VARCHAR(50),
     Biome VARCHAR(50),
     Alleles INT,
-    PRIMARY KEY (Phylum, Planet, Biome),
-    FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum) ON DELETE CASCADE,
+    PRIMARY KEY (Taxonomy, Planet, Biome),
+    FOREIGN KEY (Taxonomy) REFERENCES Kingdom(Taxonomy) ON DELETE CASCADE,
     FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome) ON DELETE CASCADE
 );
 
