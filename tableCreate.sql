@@ -57,8 +57,8 @@ CREATE TABLE Star (
     Radius REAL,
     ElementalComposition VARCHAR(50),
     PRIMARY KEY (SolarName),
-    FOREIGN KEY (SolarName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE,
-    CHECK (ObjectType = 'S')
+    FOREIGN KEY (SolarName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
+    -- CHECK (ObjectType = 'S')
 );
 
 CREATE TABLE Exoplanet (
@@ -72,8 +72,8 @@ CREATE TABLE Exoplanet (
     SolarHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
-    FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE,
-    CHECK (ObjectType = 'P')
+    FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
+    -- CHECK (ObjectType = 'P')
 );
 
 /*
