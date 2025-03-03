@@ -10,6 +10,8 @@ CREATE TABLE Galaxy (
     Constellation VARCHAR(50),
     VariationType VARCHAR(50),
     Radius REAL,
+    StarCount INT,
+    CentralObject VARCHAR(50),
     Universe VARCHAR(50) NOT NULL,
     PRIMARY KEY (GalacticName),
     FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
@@ -32,6 +34,7 @@ CREATE TABLE Quasar (
     SpectralRedshift REAL,
     DistanceFromEarth REAL,
     Luminosity REAL,
+    BlackHoleMass REAL,
     Universe VARCHAR(50) NOT NULL,
     PRIMARY KEY (QuasarName),
     FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
@@ -127,6 +130,9 @@ CREATE TABLE Kingdom (
     Phylum VARCHAR(50),
     ColloquialGenus VARCHAR(50),
     TrophicLevel VARCHAR(50),
+    SpeciesCount INT,
+    ReproductionType VARCHAR(50),
+    Lifespan INT,
     --Planet VARCHAR(50) NOT NULL,
     --Biome VARCHAR(50) NOT NULL,
     PRIMARY KEY (Phylum)
