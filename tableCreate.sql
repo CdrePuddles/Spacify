@@ -53,12 +53,13 @@ CREATE TABLE CelestialBody (
 
 CREATE TABLE Star (
     SolarName VARCHAR(50),
+    ObjectType CHAR(1),
     SpectralType CHAR(10),
     Radius REAL,
     ElementalComposition VARCHAR(50),
-    PRIMARY KEY (SolarName),
-    FOREIGN KEY (SolarName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
-    -- CHECK (ObjectType = 'S')
+    PRIMARY KEY (SolarName, ObjectType),
+    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE
+    CHECK (ObjectType = 'S')
 );
 
 CREATE TABLE Exoplanet (
@@ -73,18 +74,8 @@ CREATE TABLE Exoplanet (
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
     FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
-    -- CHECK (ObjectType = 'P')
 );
 
-/*
-CREATE TABLE Orbits_Star (
-    PlanetaryName VARCHAR(50),
-    SolName VARCHAR(50),
-    OrbitalPeriod REAL,
-    PRIMARY KEY (PlanetaryName),
-    FOREIGN KEY (PlanetaryName) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE,
-    FOREIGN KEY (SolName) REFERENCES Star(SolarName) ON DELETE CASCADE
-);*/
 
 CREATE TABLE Moon (
     LunarName VARCHAR(50),
@@ -98,16 +89,6 @@ CREATE TABLE Moon (
     FOREIGN KEY (Host) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
 );
 
-/*
-CREATE TABLE Orbits_Planet (
-    LunarName VARCHAR(50),
-    Planet VARCHAR(50) NOT NULL,
-    OrbitalPeriod REAL,
-    PRIMARY KEY (LunarName),
-    FOREIGN KEY (LunarName) REFERENCES Moon(LunarName) ON DELETE CASCADE,
-    FOREIGN KEY (Planet) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE
-);
-*/
 
 CREATE TABLE Biome (
     BiomeType VARCHAR(50),
@@ -119,11 +100,9 @@ CREATE TABLE Biome (
 CREATE TABLE Ecosystem (
     Planet VARCHAR(50),
     Biome VARCHAR(50),
-    --Phylum VARCHAR(50) NOT NULL,
     PRIMARY KEY (Planet, Biome),
     FOREIGN KEY (Planet) REFERENCES Exoplanet(PlanetaryName) ON DELETE CASCADE,
     FOREIGN KEY (Biome) REFERENCES Biome(BiomeType) ON DELETE CASCADE
-    --FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum)
 );
 
 CREATE TABLE Kingdom (
@@ -133,11 +112,7 @@ CREATE TABLE Kingdom (
     SpeciesCount INT,
     ReproductionType VARCHAR(50),
     Lifespan INT,
-    --Planet VARCHAR(50) NOT NULL,
-    --Biome VARCHAR(50) NOT NULL,
     PRIMARY KEY (Phylum)
-    --FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(PlanetaryName, BiomeType) ON DELETE CASCADE,
-    --UNIQUE (Phylum, Planet, BiomeType)
 );
 
 CREATE TABLE Has_Kingdom(
@@ -148,99 +123,5 @@ CREATE TABLE Has_Kingdom(
     PRIMARY KEY (Phylum, Planet, Biome),
     FOREIGN KEY (Phylum) REFERENCES Kingdom(Phylum) ON DELETE CASCADE,
     FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome) ON DELETE CASCADE
-    --UNIQUE (Phylum, Planet, Biome)
 );
 
-
-/*
-LOAD DATA INFILE 'Data/Universe.csv'
-INTO TABLE Galaxy
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(UniversalName, Age, ExpansionaryRate);
-
-LOAD DATA INFILE 'Data/Galaxy.csv'
-INTO TABLE Galaxy
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(GalacticName, Constellation, SpectralType, Radius);
-
-LOAD DATA INFILE 'Data/PlanetarySystem.csv'
-INTO TABLE PlanetarySystem
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(HostName, NumberOfStars, NumberOfPlanets, Radius, Host);
-
-LOAD DATA INFILE 'Data/Quasar.csv'
-INTO TABLE Quasar
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(QuasarName, SpectralRedshift, DistanceFromEarth, Luminosity);
-
-LOAD DATA INFILE 'Data/Star.csv'
-INTO TABLE Star
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(SolarName, SpectralType, Radius, ElementalComposition, DiscoveryYear, Host);
-
-LOAD DATA INFILE 'Data/Planet.csv'
-INTO TABLE Exoplanet
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(PlanetaryName, Radius, DurationOfDay, PlanetaryType, Biosphere, DiscoveryYear, Host);
-
-LOAD DATA INFILE 'Data/Orbits_Star.csv'
-INTO TABLE Orbits_Star
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(PlanetaryName, SolName, OrbitalPeriod);
-
-LOAD DATA INFILE 'Data/Moon.csv'
-INTO TABLE Moon
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(LunarName, Radius, TidalLock, CoreComposition, DiscoveryYear, Host);
-
-LOAD DATA INFILE 'Data/Orbits_Planet.csv'
-INTO TABLE Orbits_Planet
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(LunarName, PlanetaryName, OrbitalPeriod);
-
-LOAD DATA INFILE 'Data/Biome.csv'
-INTO TABLE Biome
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(BiomeType, AverageTemperature, EcologicalComposition);
-
-LOAD DATA INFILE 'Data/Ecosystem.csv'
-INTO TABLE Ecosystem
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(PlanetaryName, BiomeType, Phylum);
-
-LOAD DATA INFILE 'Data/Kingdom.csv'
-INTO TABLE Kingdom
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(Phylum, TrophicLevel, ColloquialGenus, PlanetaryName, BiomeType);
-
-LOAD DATA INFILE 'Data/Has_Kingdom.csv'
-INTO TABLE Has_Kingdom
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(Phylum, PlanetaryName, BiomeType);
-*/
