@@ -97,7 +97,7 @@ CREATE TABLE Biome (
     PRIMARY KEY (BiomeType)
 );
 
-CREATE TABLE HasBiome (
+CREATE TABLE Ecosystem (
     Planet VARCHAR(50),
     Biome VARCHAR(50),
     PRIMARY KEY (Planet, Biome),
