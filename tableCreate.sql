@@ -45,8 +45,7 @@ CREATE TABLE CelestialBody (
     DiscoveryYear INT,
     ObjectType CHAR(1) NOT NULL,
     GalacticHost VARCHAR(50) NOT NULL,
-    PRIMARY KEY (CelestialName),
-    UNIQUE (CelestialName, ObjectType),
+    PRIMARY KEY (CelestialName, ObjectType),
     FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE,
     CHECK (ObjectType IN ('S', 'P')) -- validates object type
 );
@@ -57,13 +56,14 @@ CREATE TABLE Star (
     SpectralType CHAR(10),
     Radius REAL,
     ElementalComposition VARCHAR(50),
-    PRIMARY KEY (SolarName, ObjectType),
-    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE
+    PRIMARY KEY (SolarName),
+    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
     CHECK (ObjectType = 'S')
 );
 
 CREATE TABLE Exoplanet (
     PlanetaryName VARCHAR(50),
+    ObjectType CHAR(1),
     Radius REAL,
     DurationOfDay REAL,
     OrbitalPeriod REAL,
@@ -73,7 +73,7 @@ CREATE TABLE Exoplanet (
     SolarHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
-    FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
+    FOREIGN KEY (PlanetaryName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE
 );
 
 
@@ -97,7 +97,7 @@ CREATE TABLE Biome (
     PRIMARY KEY (BiomeType)
 );
 
-CREATE TABLE HasBiome (
+CREATE TABLE Ecosystem (
     Planet VARCHAR(50),
     Biome VARCHAR(50),
     PRIMARY KEY (Planet, Biome),
@@ -124,4 +124,3 @@ CREATE TABLE Has_Kingdom(
     FOREIGN KEY (Taxonomy) REFERENCES Kingdom(Taxonomy) ON DELETE CASCADE,
     FOREIGN KEY (Planet, Biome) REFERENCES Ecosystem(Planet, Biome) ON DELETE CASCADE
 );
-
