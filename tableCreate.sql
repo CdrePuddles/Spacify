@@ -18,7 +18,7 @@ CREATE TABLE Galaxy (
     Constellation VARCHAR(50),
     VariationType VARCHAR(50),
     Radius REAL,
-    StarCount INT,
+    StarCount VARCHAR(50),
     CentralObject VARCHAR(50),
     PRIMARY KEY (GalacticName),
     FOREIGN KEY (GalacticName) REFERENCES AstronomicalObject(AstronomicalName) ON DELETE CASCADE
@@ -39,7 +39,7 @@ CREATE TABLE Quasar (
     QuasarName VARCHAR(50),
     SpectralRedshift REAL,
     Luminosity REAL,
-    BlackHoleMass REAL,
+    BlackHoleMass VARCHAR(50),
     PRIMARY KEY (QuasarName),
     FOREIGN KEY (QuasarName) REFERENCES AstronomicalObject(AstronomicalName) ON DELETE CASCADE
 );
@@ -47,9 +47,9 @@ CREATE TABLE Quasar (
 CREATE TABLE CelestialBody (
     CelestialName VARCHAR(50),
     DiscoveryYear INT,
-    GalacticHost VARCHAR(50) NOT NULL,
+    SystemHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (CelestialName),
-    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
+    FOREIGN KEY (SystemHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
 );
 
 CREATE TABLE Star (
