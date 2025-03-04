@@ -5,6 +5,14 @@ CREATE TABLE Universe (
     PRIMARY KEY (UniversalName)
 );
 
+CREATE TABLE AstronomicalObject (
+    AstronomicalName VARCHAR(50),
+    DistanceFromEarth REAL,
+    Universe VARCHAR(50) NOT NULL,
+    PRIMARY KEY (AstronomicalName),
+    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
+);
+
 CREATE TABLE Galaxy (
     GalacticName VARCHAR(50),
     Constellation VARCHAR(50),
@@ -12,9 +20,8 @@ CREATE TABLE Galaxy (
     Radius REAL,
     StarCount INT,
     CentralObject VARCHAR(50),
-    Universe VARCHAR(50) NOT NULL,
     PRIMARY KEY (GalacticName),
-    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
+    FOREIGN KEY (GalacticName) REFERENCES AstronomicalObject(AstronomicalName) ON DELETE CASCADE
 );
 
 CREATE TABLE PlanetarySystem (
@@ -22,48 +29,40 @@ CREATE TABLE PlanetarySystem (
     NumberOfStars INT,
     NumberOfPlanets INT,
     Radius REAL,
-    Host VARCHAR(50) NOT NULL,
-    Universe VARCHAR(50) NOT NULL,
+    GalaxyHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (HostName),
-    FOREIGN KEY (Host) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE,
-    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
+    FOREIGN KEY (GalaxyHost) REFERENCES Galaxy(GalacticName) ON DELETE CASCADE,
+    FOREIGN KEY (HostName) REFERENCES AstronomicalObject(AstronomicalName) ON DELETE CASCADE
 );
 
 CREATE TABLE Quasar (
     QuasarName VARCHAR(50),
     SpectralRedshift REAL,
-    DistanceFromEarth REAL,
     Luminosity REAL,
     BlackHoleMass REAL,
-    Universe VARCHAR(50) NOT NULL,
     PRIMARY KEY (QuasarName),
-    FOREIGN KEY (Universe) REFERENCES Universe(UniversalName) ON DELETE CASCADE
+    FOREIGN KEY (QuasarName) REFERENCES AstronomicalObject(AstronomicalName) ON DELETE CASCADE
 );
 
 CREATE TABLE CelestialBody (
     CelestialName VARCHAR(50),
     DiscoveryYear INT,
-    ObjectType CHAR(1) NOT NULL,
     GalacticHost VARCHAR(50) NOT NULL,
-    PRIMARY KEY (CelestialName, ObjectType),
-    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE,
-    CHECK (ObjectType IN ('S', 'P')) -- validates object type
+    PRIMARY KEY (CelestialName),
+    FOREIGN KEY (GalacticHost) REFERENCES PlanetarySystem(HostName) ON DELETE CASCADE
 );
 
 CREATE TABLE Star (
     SolarName VARCHAR(50),
-    ObjectType CHAR(1),
     SpectralType CHAR(10),
     Radius REAL,
     ElementalComposition VARCHAR(50),
     PRIMARY KEY (SolarName),
-    FOREIGN KEY (SolarName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE,
-    CHECK (ObjectType = 'S')
+    FOREIGN KEY (SolarName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
 );
 
 CREATE TABLE Exoplanet (
     PlanetaryName VARCHAR(50),
-    ObjectType CHAR(1),
     Radius REAL,
     DurationOfDay REAL,
     OrbitalPeriod REAL,
@@ -73,7 +72,7 @@ CREATE TABLE Exoplanet (
     SolarHost VARCHAR(50) NOT NULL,
     PRIMARY KEY (PlanetaryName),
     FOREIGN KEY (SolarHost) REFERENCES Star(SolarName) ON DELETE CASCADE,
-    FOREIGN KEY (PlanetaryName, ObjectType) REFERENCES CelestialBody(CelestialName, ObjectType) ON DELETE CASCADE
+    FOREIGN KEY (PlanetaryName) REFERENCES CelestialBody(CelestialName) ON DELETE CASCADE
 );
 
 
@@ -92,8 +91,8 @@ CREATE TABLE Moon (
 
 CREATE TABLE Biome (
     BiomeType VARCHAR(50),
+    FoliageDensity VARCHAR(50),
     AverageTemperature REAL,
-    EcologicalComposition VARCHAR(50),
     PRIMARY KEY (BiomeType)
 );
 
