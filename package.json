@@ -1,0 +1,15 @@
+{
+  "name": "Spacify",
+  "version": "1.0.0",
+  "description": "Creating a universe of our own to contextualize the universe and catalogue all the vast taxonomies within.",
+  "main": "server.js",
+  "keywords": [],
+  "author": {
+    "name": "Kyle Jones"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "oracledb": "^5.2.0"
+  }
+}
